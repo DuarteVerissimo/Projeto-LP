@@ -1,0 +1,8 @@
+# Ficheiros do VS Code
+.vscode/
+
+# Ficheiros temporários e backups
+*~
+*.bak
+*.swp
+.DS_Store
