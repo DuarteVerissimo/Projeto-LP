@@ -8,19 +8,18 @@
 :- ['listas_palavras.pl'].
 
 % O teu código começa aqui
-
+%------------------------------------------------------------------------------------------------------------------------------------------
 
 media([], 0).
 media(ListaValores , Media):-
     sum_list(ListaValores, Soma),
     length(ListaValores, Num),
-    M is Soma / Num,
-    arredonda(M, Media).
+    Media1 is Soma / Num,
+    arredonda(Media1, Media).
 
 mediaNotasPorIdade(IdadeMin, IdadeMax, Media) :-
     findall(Nota, (estudante(Id, Idade, _), Idade > IdadeMin, Idade =< IdadeMax, exame(Id, Nota)), ListaNotas),
     media(ListaNotas, Media).
-
 
 freqPorGenero(Genero, MediaFreq) :-
     findall(Freq, (estudante(Id, _, Genero), atividade(Id,_ ,_, Freq )), ListaFreq),
@@ -34,3 +33,15 @@ alertaSaude(HorasSono, Exercicio, SaudeMental, ListaAlunos) :-
     SaudeMental1 < SaudeMental), Lista),
     sort(Lista, ListaAlunos).
 
+probEcraNotasAltas(HorasEcra, Nota, Probabilidade) :-
+    findall(Id, (estudante(Id, _, _), 
+    exame(Id, Nota1), Nota1 > Nota, 
+    atividade(Id, _, HorasEcra1, _), HorasEcra1 > HorasEcra),
+    Lista1),
+    length(Lista1, N1),
+    findall(Id, (estudante(Id, _, _),
+    atividade(Id, _, HorasEcra1, _), HorasEcra1 > HorasEcra),
+    Lista2),
+    length(Lista2, N2),
+    (N2 > 0 -> Probabilidade1 is N1 / N2; Probabilidade1 = 0),
+    arredonda(Probabilidade1, Probabilidade).
