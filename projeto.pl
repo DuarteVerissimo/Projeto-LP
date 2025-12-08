@@ -83,3 +83,18 @@ correlacao(Lista1, Lista2, Resultado):-
 
 %------------------------------------------------------------------------------------------------------------------------------------------
 % Parte 2
+
+tamanho(Palavra, Tamanho):-
+    string_chars(Palavra, P),
+    length(P, Tamanho).
+
+verificaECalcula(Palavra1, Palavra2, CaracteresPalavra1, CaracteresPalavra2):-
+    tamanho(Palavra1, N),
+    tamanho(Palavra2, N),
+    string_chars(Palavra1, CaracteresPalavra1),
+    string_chars(Palavra2, CaracteresPalavra2).
+
+quantasN(Id, N, Quantas):-
+    lista_palavras(Id, Lista),
+    findall(Palavra, (member(Palavra, Lista), tamanho(Palavra, N)), ListaPalavrasTamanhoN),
+    length(ListaPalavrasTamanhoN, Quantas).
