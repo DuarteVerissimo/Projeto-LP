@@ -45,3 +45,13 @@ probEcraNotasAltas(HorasEcra, Nota, Probabilidade) :-
     length(Lista2, N2),
     (N2 > 0 -> Probabilidade1 is N1 / N2; Probabilidade1 = 0),
     arredonda(Probabilidade1, Probabilidade).
+
+subtraiValorDeLista([], _, []).
+subtraiValorDeLista([H|T], Valor, [H1|T1]) :- 
+    H1 is H - Valor,
+    subtraiValorDeLista(T, Valor, T1).
+
+somaQuadrados([], 0).
+somaQuadrados([H|T], Resultado)):-
+    H1 is H*H,
+    
