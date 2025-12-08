@@ -7,9 +7,6 @@
 :- ['bd_estudantes.pl'].
 :- ['listas_palavras.pl'].
 
-
-% Testes
-:- ['testes_publicos.plt'].
 %------------------------------------------------------------------------------------------------------------------------------------------
 % Parte 1
 
@@ -98,3 +95,16 @@ quantasN(Id, N, Quantas):-
     lista_palavras(Id, Lista),
     findall(Palavra, (member(Palavra, Lista), tamanho(Palavra, N)), ListaPalavrasTamanhoN),
     length(ListaPalavrasTamanhoN, Quantas).
+
+quantasC(Id, C, Quantas):-
+    lista_palavras(Id, Lista),
+    findall(Palavra, (member(Palavra, Lista), string_chars(Palavra, ListaP), ListaP = [C|_] ), ListaPalavrasCaracterC),
+    length(ListaPalavrasCaracterC, Quantas).
+
+apagaElemento(_, [], []).
+
+
+apagaElemento(_, [], []).
+apagaElemento(Elemento, [Elemento|Resto], Resto) :- !.
+apagaElemento(Elemento, [H|T], [H|NovaT]) :-
+    apagaElemento(Elemento, T, NovaT).
