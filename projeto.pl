@@ -7,8 +7,11 @@
 :- ['bd_estudantes.pl'].
 :- ['listas_palavras.pl'].
 
-% O teu código começa aqui
+
+% Testes
+:- ['testes_publicos.plt'].
 %------------------------------------------------------------------------------------------------------------------------------------------
+% Parte 1
 
 media([], 0).
 media(ListaValores , Media):-
@@ -52,6 +55,31 @@ subtraiValorDeLista([H|T], Valor, [H1|T1]) :-
     subtraiValorDeLista(T, Valor, T1).
 
 somaQuadrados([], 0).
-somaQuadrados([H|T], Resultado)):-
+somaQuadrados([H|T], Resultado):-
+    somaQuadrados(T, Soma),
     H1 is H*H,
-    
+    Resultado is Soma + H1.
+
+produtoEscalar([],[],0).
+produtoEscalar([H1|T1], [H2|T2], Resultado) :-
+    produtoEscalar(T1, T2, Ac),
+    Soma is H1*H2,
+    Resultado is Ac + Soma.
+
+correlacao(Lista1, Lista2, Resultado):-
+    media(Lista1, Media1),
+    media(Lista2, Media2),
+    subtraiValorDeLista(Lista1, Media1, L1),
+    subtraiValorDeLista(Lista2, Media2, L2),
+    produtoEscalar(L1, L2, Numerador),
+    somaQuadrados(L1, QuadradosL1),
+    somaQuadrados(L2, QuadrdadosL2),
+    RaizQuadradosL1 is sqrt(QuadradosL1),
+    RaizQuadradosL2 is sqrt(QuadrdadosL2),
+    Denominador is RaizQuadradosL1*RaizQuadradosL2,
+    Denominador =\= 0,
+    Resultado1 is Numerador / Denominador,
+    arredonda(Resultado1, Resultado).
+
+%------------------------------------------------------------------------------------------------------------------------------------------
+% Parte 2
