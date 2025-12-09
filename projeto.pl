@@ -122,3 +122,72 @@ posicoesPalavraAux([H|T], PosInicial, [Par|RestoListaPares]) :-
     Par = (H, PosInicial),
     PosAtual is PosInicial + 1,
     posicoesPalavraAux(T, PosAtual, RestoListaPares).
+
+pista1(Palavra1, Palavra2, Pista):-
+    tamanho(Palavra1, N1),
+    tamanho(Palavra2, N2),
+    N1 = N2,
+    string_chars(Palavra1, ListaPalavra1),
+    string_chars(Palavra2, ListaPalavra2),
+    pista1AUX(ListaPalavra1, ListaPalavra2, Pista).
+
+pista1AUX([], [], []).
+pista1AUX([H1|T1], [H2|T2], [N|Resto]):-
+    (H1 = H2 -> N = 2
+    ;
+    N = 0),
+    pista1AUX(T1, T2, Resto).
+
+pista2(Palavra1, Palavra2, Pista):-
+    tamanho(Palavra1, N1),
+    tamanho(Palavra2, N2),
+    N1 = N2,
+    string_chars(Palavra1, ListaPalavra1),
+    string_chars(Palavra2, ListaPalavra2),
+    pista2AUX(ListaPalavra1, ListaPalavra2, ListaPalavra1, Pista).
+
+pista2AUX([],[], _, []).
+pista2AUX([H1|T1], [H2|T2], ListaPalavra1, [N|Resto]):-
+    (
+        H1 = H2 -> N = 2
+    ;
+        member(H2, ListaPalavra1) -> N = 1
+    ;
+        N = 0
+    ),
+    pista2AUX(T1, T2, ListaPalavra1, Resto).
+
+pista3(Palavra1, Palavra2, Pista):-
+    tamanho(Palavra1, N1),
+    tamanho(Palavra2, N2),
+    N1 = N2,
+    string_chars(Palavra1, ListaPalavra1),
+    string_chars(Palavra2, ListaPalavra2),
+    letrasDiferentes(ListaPalavra1, ListaPalavra2, ListaLetrasDiferentes),
+    pista3AUX(ListaPalavra1, ListaPalavra2, ListaLetrasDiferentes, Pista).
+
+letrasDiferentes([], [], []).
+letrasDiferentes([H1|T1], [H2|T2], ListaFinal):-
+    ( H1 \= H2 -> 
+        letrasDiferentes(T1, T2 , Resto),
+        ListaFinal = [H1|Resto] 
+    ;
+        letrasDiferentes(T1, T2, ListaFinal)
+    ).
+
+pista3AUX([], [], _, []).
+pista3AUX([H1|T1], [H2|T2], ListaLetrasDiferentes, [N|Resto]):-
+    ( H1 = H2 -> 
+        N = 2, 
+        pista3AUX(T1, T2, ListaLetrasDiferentes, Resto)
+    ;
+    select(H2, ListaLetrasDiferentes, ListaLetrasDiferentesNova) ->
+        N = 1, 
+        pista3AUX(T1, T2, ListaLetrasDiferentesNova, Resto)
+    ;
+        N = 0,
+        pista3AUX(T1, T2, ListaLetrasDiferentes, Resto)
+    ).
+
+%------------------------------------------------------------------------------------------------------------------------------------------
+% Parte 3
