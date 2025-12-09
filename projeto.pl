@@ -7,7 +7,13 @@
 :- ['bd_estudantes.pl'].
 :- ['listas_palavras.pl'].
 
+
+
 %------------------------------------------------------------------------------------------------------------------------------------------
+%testes
+:- ['testes_publicos.plt'].
+%------------------------------------------------------------------------------------------------------------------------------------------
+
 % Parte 1
 
 media([], 0).
@@ -101,10 +107,18 @@ quantasC(Id, C, Quantas):-
     findall(Palavra, (member(Palavra, Lista), string_chars(Palavra, ListaP), ListaP = [C|_] ), ListaPalavrasCaracterC),
     length(ListaPalavrasCaracterC, Quantas).
 
-apagaElemento(_, [], []).
+apagaElemento(_, [], []) :- !.
+apagaElemento(Elemento, [Elemento|T], T) :- !.
+apagaElemento(Elemento, [H|T], [H|Resto]) :-
+    apagaElemento(Elemento, T, Resto).
 
+posicoesPalavra(Palavra, Posicoes):-
+    string_chars(Palavra, ListaP),
+    posicoesPalavraAux(ListaP, 1, ListaPares),
+    sort(ListaPares, Posicoes).
 
-apagaElemento(_, [], []).
-apagaElemento(Elemento, [Elemento|Resto], Resto) :- !.
-apagaElemento(Elemento, [H|T], [H|NovaT]) :-
-    apagaElemento(Elemento, T, NovaT).
+posicoesPalavraAux([], _, []).
+posicoesPalavraAux([H|T], PosInicial, [Par|RestoListaPares]) :-
+    Par = (H, PosInicial),
+    PosAtual is PosInicial + 1,
+    posicoesPalavraAux(T, PosAtual, RestoListaPares).
