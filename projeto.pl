@@ -10,13 +10,9 @@
 
 
 %------------------------------------------------------------------------------------------------------------------------------------------
-%testes
-:- ['testes_publicos.plt'].
-%------------------------------------------------------------------------------------------------------------------------------------------
-
 % Parte 1
 
-media([], 0).
+media([], 0):-!.
 media(ListaValores , Media):-
     sum_list(ListaValores, Soma),
     length(ListaValores, Num),
@@ -191,3 +187,15 @@ pista3AUX([H1|T1], [H2|T2], ListaLetrasDiferentes, [N|Resto]):-
 
 %------------------------------------------------------------------------------------------------------------------------------------------
 % Parte 3
+
+maratonaFilmes(ListaFilmes, ListaRestricoes, Programaca):-
+    completaComEmpty(ListaFilmes, ListaCom7Filmes),
+
+
+
+completaComEmpty(ListaFilmes, ListaFilmesFinal):-
+    length(ListaFilmes, Nfilmes),
+    NumEmpty is 7 - Nfilmes,
+    length(ListaEmptys, NumEmpty),
+    maplist(=(empty), ListaEmptys),
+append([Listafilmes, ListaEmptys], ListaFilmesFinal).
