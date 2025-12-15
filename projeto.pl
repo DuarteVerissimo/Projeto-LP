@@ -228,7 +228,7 @@ verificaRestricoes([naoseguido(Filme1, Filme2) | RestoDasRestricoes], Programaca
     nth1(IndiceFilme1, Programacao, Filme1),
     nth1(IndiceFilme2, Programacao, Filme2),
     (
-        (abs(IndiceFilme1 - IndiceFilme2, ModuloDiferencaIndices), ModuloDiferencaIndices \= 1)
+        (ModuloDiferencaIndices is abs(IndiceFilme1 - IndiceFilme2), ModuloDiferencaIndices \= 1)
     ;
         (IndiceFilme1 = 4, IndiceFilme2 = 5)
     ),
