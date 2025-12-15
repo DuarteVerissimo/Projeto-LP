@@ -183,19 +183,59 @@ pista3AUX([H1|T1], [H2|T2], ListaLetrasDiferentes, [N|Resto]):-
     ;
         N = 0,
         pista3AUX(T1, T2, ListaLetrasDiferentes, Resto)
-    ).
+    ).  
 
 %------------------------------------------------------------------------------------------------------------------------------------------
 % Parte 3
 
-maratonaFilmes(ListaFilmes, ListaRestricoes, Programaca):-
+maratonaFilmes(ListaFilmes, ListaRestricoes, Programacao):-
     completaComEmpty(ListaFilmes, ListaCom7Filmes),
-
-
+    findall(Programacao1,(permutation(ListaCom7Filmes, Programacao1), verificaRestricoes(ListaRestricoes,Programacao1)), ListaComRepetidos),
+    sort(ListaComRepetidos, Programacao).
 
 completaComEmpty(ListaFilmes, ListaFilmesFinal):-
     length(ListaFilmes, Nfilmes),
     NumEmpty is 7 - Nfilmes,
     length(ListaEmptys, NumEmpty),
     maplist(=(empty), ListaEmptys),
-append([Listafilmes, ListaEmptys], ListaFilmesFinal).
+    append([ListaFilmes, ListaEmptys], ListaFilmesFinal).
+
+
+verificaRestricoes([],_).
+
+verificaRestricoes([terror(Filme) | RestoDasRestricoes], Programacao):-
+    nth1(IndiceFilmeTerror, Programacao, Filme),
+    member(IndiceFilmeTerror, [3,4,7]),
+    verificaRestricoes(RestoDasRestricoes, Programacao).
+
+verificaRestricoes([soPode(Filme, Sessao) | RestoDasRestricoes], Programacao):-
+    nth1(Sessao, Programacao, Filme),
+    verificaRestricoes(RestoDasRestricoes, Programacao).
+
+verificaRestricoes([nunca(Filme, Sessao) | RestoDasRestricoes], Programacao):-
+    nth1(IndiceFilme, Programacao, Filme),
+    IndiceFilme \= Sessao,
+    verificaRestricoes(RestoDasRestricoes, Programacao).
+
+verificaRestricoes([seguido(Filme1, Filme2) | RestoDasRestricoes], Programacao):-
+    nth1(IndiceFilme1, Programacao, Filme1),
+    nth1(IndiceFilme2, Programacao, Filme2),
+    IndiceFilme1 \= 4,
+    1 is IndiceFilme2 - IndiceFilme1,
+    verificaRestricoes(RestoDasRestricoes, Programacao).
+
+verificaRestricoes([naoseguido(Filme1, Filme2) | RestoDasRestricoes], Programacao):-
+    nth1(IndiceFilme1, Programacao, Filme1),
+    nth1(IndiceFilme2, Programacao, Filme2),
+    (
+        (abs(IndiceFilme1 - IndiceFilme2, ModuloDiferencaIndices), ModuloDiferencaIndices \= 1)
+    ;
+        (IndiceFilme1 = 4, IndiceFilme2 = 5)
+    ),
+    verificaRestricoes(RestoDasRestricoes, Programacao).
+
+verificaRestricoes([antes(Filme1, Filme2) | RestoDasRestricoes], Programacao):-
+    nth1(IndiceFilme1, Programacao, Filme1),
+    nth1(IndiceFilme2, Programacao, Filme2),
+    IndiceFilme1 < IndiceFilme2,
+    verificaRestricoes(RestoDasRestricoes, Programacao).
