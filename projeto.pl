@@ -224,13 +224,13 @@ verificaRestricoes([seguido(Filme1, Filme2) | RestoDasRestricoes], Programacao):
     1 is IndiceFilme2 - IndiceFilme1,
     verificaRestricoes(RestoDasRestricoes, Programacao).
 
-verificaRestricoes([naoseguido(Filme1, Filme2) | RestoDasRestricoes], Programacao):-
+verificaRestricoes([naoSeguido(Filme1, Filme2) | RestoDasRestricoes], Programacao):-
     nth1(IndiceFilme1, Programacao, Filme1),
     nth1(IndiceFilme2, Programacao, Filme2),
     (
         (ModuloDiferencaIndices is abs(IndiceFilme1 - IndiceFilme2), ModuloDiferencaIndices \= 1)
     ;
-        (IndiceFilme1 = 4, IndiceFilme2 = 5)
+        ((IndiceFilme1 = 4, IndiceFilme2 = 5); (IndiceFilme1 = 5, IndiceFilme2 = 4))
     ),
     verificaRestricoes(RestoDasRestricoes, Programacao).
 
