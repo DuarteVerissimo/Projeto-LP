@@ -94,23 +94,34 @@ probEcraNotasAltas(HorasEcra, Nota, Probabilidade) :-
     arredonda(Probabilidade1, Probabilidade).
 
 
+% Subtrai um valor de todos elementos de uma lista de valores
+% Caso Base: Uma Lista vazia resulta numa lista vazia
 subtraiValorDeLista([], _, []).
+% Caso Recursivo: Subtrai o valor à lista e continua na cauda
 subtraiValorDeLista([H|T], Valor, [H1|T1]) :- 
     H1 is H - Valor,
     subtraiValorDeLista(T, Valor, T1).
 
+
+% Calcula a Soma dos quadrados de todos os elementos de uma lista
+% Caso Base: A soma dos quadrados de uma lista vazia é 0
 somaQuadrados([], 0).
+% Caso Recursivo: Soma o quadrado da cabeça ao somatório dos quadrados da cauda
 somaQuadrados([H|T], Resultado):-
     somaQuadrados(T, Soma),
-    H1 is H*H,
-    Resultado is Soma + H1.
+    Resultado is Soma + H*H.
 
+% Calcula o produto escalar (Soma dos produtos de todos os elementos com a mesma
+% posição) de duas listas
+% Caso Base: O produto escalar de duas listas vazias é 0
 produtoEscalar([],[],0).
+% Caso Recursivo: Soma o produto das cabeças com o produto escalar da cauda
 produtoEscalar([H1|T1], [H2|T2], Resultado) :-
     produtoEscalar(T1, T2, Ac),
     Soma is H1*H2,
     Resultado is Ac + Soma.
 
+% Calcula a correlacao de duas listas (De acordo com a formula)
 correlacao(Lista1, Lista2, Resultado):-
     media(Lista1, Media1),
     media(Lista2, Media2),
