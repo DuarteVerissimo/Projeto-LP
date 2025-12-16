@@ -11,7 +11,11 @@
 
 %------------------------------------------------------------------------------------------------------------------------------------------
 % Parte 1
+%------------------------------------------------------------------------------------------------------------------------------------------
 
+
+% Calcula a média aritmética de uma lista de valores
+% Caso Base: A média de uma lista vazia é 0 (o cut (!) impede que volte atrás) 
 media([], 0):-!.
 media(ListaValores , Media):-
     sum_list(ListaValores, Soma),
@@ -19,34 +23,76 @@ media(ListaValores , Media):-
     Media1 is Soma / Num,
     arredonda(Media1, Media).
 
+
+% Calcula a média das notas dos exames de todos os estudantes de um certo
+% intervalo de idades ([IdadeMin, IdadeMax])
 mediaNotasPorIdade(IdadeMin, IdadeMax, Media) :-
-    findall(Nota, (estudante(Id, Idade, _), Idade > IdadeMin, Idade =< IdadeMax, exame(Id, Nota)), ListaNotas),
-    media(ListaNotas, Media).
+    % Recolhe todas as notas de alunos que estao nesse intervalo de 
+    % idades e junta numa lista
+    findall(Nota, (
+        estudante(Id, Idade, _), 
+        Idade > IdadeMin, 
+        Idade =< IdadeMax, 
+        exame(Id, Nota)
+    ), ListaNotas),
+    media(ListaNotas, Media).       % Calcula a media dessa lista
 
+
+% Calcula a media da frequência de atividade física de todos os estudantes 
+% de um certo género
 freqPorGenero(Genero, MediaFreq) :-
-    findall(Freq, (estudante(Id, _, Genero), atividade(Id,_ ,_, Freq )), ListaFreq),
-    media(ListaFreq, MediaFreq).
+    % Recolhe todas as frequências de atividade física dess género
+    % e junta numa lista
+    findall(Freq, (
+        estudante(Id, _, Genero), 
+        atividade(Id,_ ,_, Freq )
+    ), 
+    ListaFreq),
+    media(ListaFreq, MediaFreq).        % Calcula a media dessa lista
 
+
+% Devolve uma lista ordenada de IDs de alunos que tem saúde 'Fraca'
+% e os seus valores de sono, exercício e saúde mental são inferiores 
+% aos valores dados
 alertaSaude(HorasSono, Exercicio, SaudeMental, ListaAlunos) :-
-    findall(Id, (estudante(Id, _, _), 
-    saude(Id, HorasSono1, fraca, Exercicio1, SaudeMental1),
-    HorasSono1 < HorasSono, 
-    Exercicio1 < Exercicio, 
-    SaudeMental1 < SaudeMental), Lista),
-    sort(Lista, ListaAlunos).
+    % Recolhe os IDs dos alunos em risco de saúde e 
+    % junta-os numa lista
+    findall(Id, (
+        estudante(Id, _, _), 
+        saude(Id, HorasSonoEstudante, fraca, ExercicioEstudante, SaudeMentalEstudante),
+        HorasSonoEstudante < HorasSono, 
+        ExercicioEstudante < Exercicio, 
+        SaudeMentalEstudante < SaudeMental
+    ), ListaAlunosDesordenada),
+    sort(ListaAlunosDesordenada, ListaAlunos).      % Ordena e remove IDs duplicados
 
+
+% Calcula a probabilidade de um aluno com tempo de ecrã maior do que 
+% HorasEcra ter uma nota maior do que Nota
 probEcraNotasAltas(HorasEcra, Nota, Probabilidade) :-
-    findall(Id, (estudante(Id, _, _), 
-    exame(Id, Nota1), Nota1 > Nota, 
-    atividade(Id, _, HorasEcra1, _), HorasEcra1 > HorasEcra),
-    Lista1),
-    length(Lista1, N1),
-    findall(Id, (estudante(Id, _, _),
-    atividade(Id, _, HorasEcra1, _), HorasEcra1 > HorasEcra),
-    Lista2),
-    length(Lista2, N2),
-    (N2 > 0 -> Probabilidade1 is N1 / N2; Probabilidade1 = 0),
+    % Recolhe os IDs de todos Alunos que tem a nota do 
+    % exame maior do que Nota e tempo de ecrã maior do que 
+    % HorasEcra (Casos Favoráveis)
+    findall(Id, (
+        estudante(Id, _, _), 
+        exame(Id, NotaEstudante), NotaEstudante > Nota, 
+        atividade(Id, _, HorasEcraEstudante, _), HorasEcraEstudante > HorasEcra
+    ),    ListaFavoraveis),
+    length(ListaFavoraveis, NumFavoraveis),
+    
+    % Recolhe os IDs de todos os alunos que tem tempo de ecrã
+    % maior do que HorasEcra (Casos Possíveis)
+    findall(Id, (
+        estudante(Id, _, _),
+        atividade(Id, _, HorasEcraEstudante, _), HorasEcraEstudante > HorasEcra
+    ),    ListaPossiveis),
+    length(ListaPossiveis, NumPossiveis),
+    
+    % Probabilidade é a divisão dos 2 números se o número de casos 
+    % possíveis não for 0
+    (NumPossiveis > 0 -> Probabilidade1 is NumFavoraveis / NumPossiveis; Probabilidade1 = 0),
     arredonda(Probabilidade1, Probabilidade).
+
 
 subtraiValorDeLista([], _, []).
 subtraiValorDeLista([H|T], Valor, [H1|T1]) :- 
@@ -82,6 +128,7 @@ correlacao(Lista1, Lista2, Resultado):-
 
 %------------------------------------------------------------------------------------------------------------------------------------------
 % Parte 2
+%------------------------------------------------------------------------------------------------------------------------------------------
 
 tamanho(Palavra, Tamanho):-
     string_chars(Palavra, P),
@@ -187,10 +234,15 @@ pista3AUX([H1|T1], [H2|T2], ListaLetrasDiferentes, [N|Resto]):-
 
 %------------------------------------------------------------------------------------------------------------------------------------------
 % Parte 3
+%------------------------------------------------------------------------------------------------------------------------------------------
+
 
 maratonaFilmes(ListaFilmes, ListaRestricoes, Programacao):-
     completaComEmpty(ListaFilmes, ListaCom7Filmes),
-    findall(Programacao1,(permutation(ListaCom7Filmes, Programacao1), verificaRestricoes(ListaRestricoes,Programacao1)), ListaComRepetidos),
+    findall(Programacao1,(
+        permutation(ListaCom7Filmes, Programacao1), 
+        verificaRestricoes(ListaRestricoes,Programacao1)
+    ), ListaComRepetidos),
     sort(ListaComRepetidos, Programacao).
 
 completaComEmpty(ListaFilmes, ListaFilmesFinal):-
