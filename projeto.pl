@@ -23,7 +23,6 @@ media(ListaValores , Media):-
     Media1 is Soma / Num,
     arredonda(Media1, Media).
 
-
 % Calcula a média das notas dos exames de todos os estudantes de um certo
 % intervalo de idades ([IdadeMin, IdadeMax])
 mediaNotasPorIdade(IdadeMin, IdadeMax, Media) :-
@@ -37,7 +36,6 @@ mediaNotasPorIdade(IdadeMin, IdadeMax, Media) :-
     ), ListaNotas),
     media(ListaNotas, Media).       % Calcula a media dessa lista
 
-
 % Calcula a media da frequência de atividade física de todos os estudantes 
 % de um certo género
 freqPorGenero(Genero, MediaFreq) :-
@@ -49,7 +47,6 @@ freqPorGenero(Genero, MediaFreq) :-
     ), 
     ListaFreq),
     media(ListaFreq, MediaFreq).        % Calcula a media dessa lista
-
 
 % Devolve uma lista ordenada de IDs de alunos que tem saúde 'Fraca'
 % e os seus valores de sono, exercício e saúde mental são inferiores 
@@ -65,7 +62,6 @@ alertaSaude(HorasSono, Exercicio, SaudeMental, ListaAlunos) :-
         SaudeMentalEstudante < SaudeMental
     ), ListaAlunosDesordenada),
     sort(ListaAlunosDesordenada, ListaAlunos).      % Ordena e remove IDs duplicados
-
 
 % Calcula a probabilidade de um aluno com tempo de ecrã maior do que 
 % HorasEcra ter uma nota maior do que Nota
@@ -93,7 +89,6 @@ probEcraNotasAltas(HorasEcra, Nota, Probabilidade) :-
     (NumPossiveis > 0 -> Probabilidade1 is NumFavoraveis / NumPossiveis; Probabilidade1 = 0),
     arredonda(Probabilidade1, Probabilidade).
 
-
 % Subtrai um valor de todos elementos de uma lista de valores
 % Caso Base: Uma Lista vazia resulta numa lista vazia
 subtraiValorDeLista([], _, []).
@@ -101,7 +96,6 @@ subtraiValorDeLista([], _, []).
 subtraiValorDeLista([H|T], Valor, [H1|T1]) :- 
     H1 is H - Valor,
     subtraiValorDeLista(T, Valor, T1).
-
 
 % Calcula a Soma dos quadrados de todos os elementos de uma lista
 % Caso Base: A soma dos quadrados de uma lista vazia é 0
@@ -141,28 +135,54 @@ correlacao(Lista1, Lista2, Resultado):-
 % Parte 2
 %------------------------------------------------------------------------------------------------------------------------------------------
 
+% Calcula o número de caractéres de uma palavra
 tamanho(Palavra, Tamanho):-
     string_chars(Palavra, P),
     length(P, Tamanho).
 
+% Devolve duas listas de caracteres das palavras 1 e 2, se ambas tiverem o mesmo
+% número de caractéres
 verificaECalcula(Palavra1, Palavra2, CaracteresPalavra1, CaracteresPalavra2):-
-    tamanho(Palavra1, N),
-    tamanho(Palavra2, N),
+    tamanho(Palavra1, N),                           % N só unifica se tiverem o mesmo tamanho,
+    tamanho(Palavra2, N),                           % caso contrário o predicado falha 
     string_chars(Palavra1, CaracteresPalavra1),
     string_chars(Palavra2, CaracteresPalavra2).
 
+% Devolve o número de palavras de tamanho N de uma lista identificada por ID
 quantasN(Id, N, Quantas):-
-    lista_palavras(Id, Lista),
-    findall(Palavra, (member(Palavra, Lista), tamanho(Palavra, N)), ListaPalavrasTamanhoN),
-    length(ListaPalavrasTamanhoN, Quantas).
+    lista_palavras(Id, Lista),      % Junta todas as palavras numa lista
+    % Encontra todas as palavras de tamanho N pertencentes à lista, e
+    % junta-as numa lista
+    findall(Palavra, (
+        member(Palavra, Lista), 
+        tamanho(Palavra, N)
+    ), ListaPalavrasTamanhoN),
+    length(ListaPalavrasTamanhoN, Quantas).     % Mede o tamanho o dessa lista
 
+% Devolve o número de palavras que começam pelo o caracter C de uma lista identificada por ID
 quantasC(Id, C, Quantas):-
     lista_palavras(Id, Lista),
-    findall(Palavra, (member(Palavra, Lista), string_chars(Palavra, ListaP), ListaP = [C|_] ), ListaPalavrasCaracterC),
+    % Encontra todas as palavras que começam pelo caracter C pertencentes à lista, 
+    % e junta-as numa lista    
+    findall(Palavra, (
+        member(Palavra, Lista), 
+        string_chars(Palavra, ListaP), 
+        ListaP = [C|_] 
+    ), ListaPalavrasCaracterC),
     length(ListaPalavrasCaracterC, Quantas).
 
+% Apaga o primeiro caracter igual a Elemento de uma lista e devolve a nova lista,
+% se Elemento não existir na lista devolve a lista original
+% Caso Base: Se a Lista for vazia devole uma lista Vazia(fim da recursão)
+% Se as listas não forem do mesmo tamanho o predicado falha
 apagaElemento(_, [], []) :- !.
+
+% Caso Recursivo 1: Se a cabeça da lista for igual a Elemento devolve apenas a
+% cauda, removendo o elemento. O corte garante que só apaga a primeira ocorrência
 apagaElemento(Elemento, [Elemento|T], T) :- !.
+
+% Caso Recursivo 2: Se a cabeça for diferente do Elemento deixa a cabeça na lista
+% nova e tenta apagar o Elemento na cauda
 apagaElemento(Elemento, [H|T], [H|Resto]) :-
     apagaElemento(Elemento, T, Resto).
 
