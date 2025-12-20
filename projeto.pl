@@ -205,7 +205,7 @@ posicoesPalavraAux([H|T], PosInicial, [Par|RestoListaPares]) :-
     PosAtual is PosInicial + 1,
     posicoesPalavraAux(T, PosAtual, RestoListaPares).
 
-% Devolve uma lista que tem 2 na posição i se a Palavra1 (mistério) tem a mesma 
+% Devolve uma lista (pista) que tem 2 na posição i se a Palavra1 (mistério) tem a mesma 
 % letra na posição i da Palavra2 (palpite) e 0 caso contrário
 pista1(Palavra1, Palavra2, Pista):-
     tamanho(Palavra1, TamanhoP1),
@@ -226,8 +226,8 @@ pista1AUX([H1|T1], [H2|T2], [N|Resto]):-
     N = 0),
     pista1AUX(T1, T2, Resto).
 
-% Devolve uma lista que tem 2 na posição i se a Palavra1 (mistério) tem a mesma letra que a palavra2 (palpite),
-% tem 1 se a letra da palavra2 existir na Palavra1 mas noutra posição, O caso contrário.
+% Devolve uma lista (pista) que tem 2 na posição i se a Palavra1 (mistério) tem a mesma letra que a palavra2 (palpite),
+% tem 1 se a letra da palavra2 existir na Palavra1 mas noutra posição, 0 caso contrário
 pista2(Palavra1, Palavra2, Pista):-
     tamanho(Palavra1, TamanhoP1),
     tamanho(Palavra2, TamanhoP2),
@@ -237,7 +237,7 @@ pista2(Palavra1, Palavra2, Pista):-
     pista2AUX(ListaPalavra1, ListaPalavra2, ListaPalavra1, Pista).
 
 % Predicado Auxiliar recursivo de pista2, que percorre as letras das duas palavras e ainda recebe a lista 
-% das letras da palavra1 (mistério) oara verificar se a letra existe noutra posição
+% das letras da palavra1 (mistério) para verificar se a letra existe noutra posição
 % Caso Base: Se a lista da palavra é vazia devolve uma lista vazia
 pista2AUX([],[], _, []).
 % Caso Recursivo: Se as cabeças forem iguais adiciona 2 à lista resultante da cauda, se as cabeças forem 
@@ -253,7 +253,8 @@ pista2AUX([H1|T1], [H2|T2], ListaPalavra1, [N|Resto]):-
     ),
     pista2AUX(T1, T2, ListaPalavra1, Resto).
 
-
+% Devolve uma lista (pista) que tem 2 na posição i se a Palavra1 (mistério) tem a mesma letra que a palavra2 (palpite),
+% tem 1 se a letra da palavra2 existir na Palavra1 noutra posição mas até um certo número, 0 caso contrário
 pista3(Palavra1, Palavra2, Pista):-
     tamanho(Palavra1, TamanhoP1),
     tamanho(Palavra2, TamanhoP2),
@@ -263,7 +264,13 @@ pista3(Palavra1, Palavra2, Pista):-
     letrasDiferentes(ListaPalavra1, ListaPalavra2, ListaLetrasDiferentes),
     pista3AUX(ListaPalavra1, ListaPalavra2, ListaLetrasDiferentes, Pista).
 
+
+% Predicado Auxiliar de pista3, que constrói uma lista com as letras de Palavra1 que estão em posições
+% onde as palavras diferem
+% Caso Base: Se a lista é vazia devolve uma lista vazia
 letrasDiferentes([], [], []).
+% Caso Recursivo: se as cabecas forem diferentes guarda o H1 (letra da palavra mistério) numa lista, caso contrário
+% ignora
 letrasDiferentes([H1|T1], [H2|T2], ListaFinal):-
     ( H1 \= H2 -> 
         letrasDiferentes(T1, T2 , Resto),
@@ -272,13 +279,19 @@ letrasDiferentes([H1|T1], [H2|T2], ListaFinal):-
         letrasDiferentes(T1, T2, ListaFinal)
     ).
 
+% Predicado Auxiliar de pista3, que devole a pista e recebe a lista de letras diferentes
+% Caso Base: Se a lista é vazia devolve uma lista vazia
 pista3AUX([], [], _, []).
+% Caso Recursivo: Compara as cabeças das listas das palavras, se forem iguais adiciona 2 à lista resultante da cauda,
+% se H2 existir na lista de letras diferentes adiciona 1 à lista resultante da cauda e remove H2 da lista de letras diferentes,
+% caso contrário adiciona 0
 pista3AUX([H1|T1], [H2|T2], ListaLetrasDiferentes, [N|Resto]):-
     ( H1 = H2 -> 
         N = 2, 
         pista3AUX(T1, T2, ListaLetrasDiferentes, Resto)
     ;
-    select(H2, ListaLetrasDiferentes, ListaLetrasDiferentesNova) ->
+        member(H2, ListaLetrasDiferentes) ->
+        apagaElemento(H2, ListaLetrasDiferentes, ListaLetrasDiferentesNova),
         N = 1, 
         pista3AUX(T1, T2, ListaLetrasDiferentesNova, Resto)
     ;
