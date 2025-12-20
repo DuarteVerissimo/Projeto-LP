@@ -186,41 +186,63 @@ apagaElemento(Elemento, [Elemento|T], T) :- !.
 apagaElemento(Elemento, [H|T], [H|Resto]) :-
     apagaElemento(Elemento, T, Resto).
 
+
+% Devolve uma lista ordenada de pares que contem a letra e posição onde ela se 
+% encontra na palavra 
 posicoesPalavra(Palavra, Posicoes):-
-    string_chars(Palavra, ListaP),
+    string_chars(Palavra, ListaP),              % Transforma a palavra numa lista
     posicoesPalavraAux(ListaP, 1, ListaPares),
     sort(ListaPares, Posicoes).
 
+
+% Predicado Auxiliar recursivo de posicoesPalavra, que devolve uma lista desorganizada
+% com os pares
+% Caso Base: Se a lista da palavra é vazia devolve uma lista vazia
 posicoesPalavraAux([], _, []).
+% Caso Recursivo: cria um par que contem a letra e a pos Atual e junta ao resultado da cauda
 posicoesPalavraAux([H|T], PosInicial, [Par|RestoListaPares]) :-
     Par = (H, PosInicial),
     PosAtual is PosInicial + 1,
     posicoesPalavraAux(T, PosAtual, RestoListaPares).
 
+% Devolve uma lista que tem 2 na posição i se a Palavra1 (mistério) tem a mesma 
+% letra na posição i da Palavra2 (palpite) e 0 caso contrário
 pista1(Palavra1, Palavra2, Pista):-
-    tamanho(Palavra1, N1),
-    tamanho(Palavra2, N2),
-    N1 = N2,
+    tamanho(Palavra1, TamanhoP1),
+    tamanho(Palavra2, TamanhoP2),
+    TamanhoP1 = TamanhoP2,                  % Verifica se as palavras tem o mesmo tamanho
     string_chars(Palavra1, ListaPalavra1),
     string_chars(Palavra2, ListaPalavra2),
     pista1AUX(ListaPalavra1, ListaPalavra2, Pista).
 
+% Predicado Auxiliar recursivo de pista1, que devole a pista
+% Caso Base: Se a lista da palavra é vazia devolve uma lista vazia
 pista1AUX([], [], []).
+% Caso Recusivo: Compara a Cabeça das duas listas e se forem iguais adiciona 2 à lista resultante da cauda
+% caso contrário adiciona 0
 pista1AUX([H1|T1], [H2|T2], [N|Resto]):-
     (H1 = H2 -> N = 2
     ;
     N = 0),
     pista1AUX(T1, T2, Resto).
 
+% Devolve uma lista que tem 2 na posição i se a Palavra1 (mistério) tem a mesma letra que a palavra2 (palpite),
+% tem 1 se a letra da palavra2 existir na Palavra1 mas noutra posição, O caso contrário.
 pista2(Palavra1, Palavra2, Pista):-
-    tamanho(Palavra1, N1),
-    tamanho(Palavra2, N2),
-    N1 = N2,
+    tamanho(Palavra1, TamanhoP1),
+    tamanho(Palavra2, TamanhoP2),
+    TamanhoP1 = TamanhoP2,                  % Verifica se as palavras tem o mesmo tamanho
     string_chars(Palavra1, ListaPalavra1),
     string_chars(Palavra2, ListaPalavra2),
     pista2AUX(ListaPalavra1, ListaPalavra2, ListaPalavra1, Pista).
 
+% Predicado Auxiliar recursivo de pista2, que percorre as letras das duas palavras e ainda recebe a lista 
+% das letras da palavra1 (mistério) oara verificar se a letra existe noutra posição
+% Caso Base: Se a lista da palavra é vazia devolve uma lista vazia
 pista2AUX([],[], _, []).
+% Caso Recursivo: Se as cabeças forem iguais adiciona 2 à lista resultante da cauda, se as cabeças forem 
+% diferentes mas a cabeça da palavra2 existir na palavra1 adiciona 1 à lista resultante da cauda, caso 
+% contrário adiciona 0
 pista2AUX([H1|T1], [H2|T2], ListaPalavra1, [N|Resto]):-
     (
         H1 = H2 -> N = 2
@@ -231,10 +253,11 @@ pista2AUX([H1|T1], [H2|T2], ListaPalavra1, [N|Resto]):-
     ),
     pista2AUX(T1, T2, ListaPalavra1, Resto).
 
+
 pista3(Palavra1, Palavra2, Pista):-
-    tamanho(Palavra1, N1),
-    tamanho(Palavra2, N2),
-    N1 = N2,
+    tamanho(Palavra1, TamanhoP1),
+    tamanho(Palavra2, TamanhoP2),
+    TamanhoP1 = TamanhoP2,                  % Verifica se as palavras tem o mesmo tamanho
     string_chars(Palavra1, ListaPalavra1),
     string_chars(Palavra2, ListaPalavra2),
     letrasDiferentes(ListaPalavra1, ListaPalavra2, ListaLetrasDiferentes),
