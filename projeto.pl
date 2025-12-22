@@ -303,7 +303,8 @@ pista3AUX([H1|T1], [H2|T2], ListaLetrasDiferentes, [N|Resto]):-
 % Parte 3
 %------------------------------------------------------------------------------------------------------------------------------------------
 
-
+% Predicado Principal, completa a lista filmes com 'empty' para ter 7 posições, gera permutacoes,
+% filtra as restrições, ordena as programacoes validas e remove as duplicadas
 maratonaFilmes(ListaFilmes, ListaRestricoes, Programacao):-
     completaComEmpty(ListaFilmes, ListaCom7Filmes),
     findall(Programacao1,(
@@ -312,6 +313,7 @@ maratonaFilmes(ListaFilmes, ListaRestricoes, Programacao):-
     ), ListaComRepetidos),
     sort(ListaComRepetidos, Programacao).
 
+% Completa a lista de filmes com 'empty' ate ter 7 posicoes
 completaComEmpty(ListaFilmes, ListaFilmesFinal):-
     length(ListaFilmes, Nfilmes),
     NumEmpty is 7 - Nfilmes,
@@ -319,40 +321,48 @@ completaComEmpty(ListaFilmes, ListaFilmesFinal):-
     maplist(=(empty), ListaEmptys),
     append([ListaFilmes, ListaEmptys], ListaFilmesFinal).
 
-
+% Caso Base: Não tem restrições, é sempre verdade a programação
 verificaRestricoes([],_).
 
+% Restricao 'terror': filme de terror so pode ser nas sessoes 3,4 ou 7 (a partir das 20h)
 verificaRestricoes([terror(Filme) | RestoDasRestricoes], Programacao):-
     nth1(IndiceFilmeTerror, Programacao, Filme),
     member(IndiceFilmeTerror, [3,4,7]),
     verificaRestricoes(RestoDasRestricoes, Programacao).
 
+% Restricao 'soPode': o filme tem de estar exatamente na sessao indicada
 verificaRestricoes([soPode(Filme, Sessao) | RestoDasRestricoes], Programacao):-
     nth1(Sessao, Programacao, Filme),
     verificaRestricoes(RestoDasRestricoes, Programacao).
 
+% Restricao 'nunca': o filme nao pode estar na sessao indicada
 verificaRestricoes([nunca(Filme, Sessao) | RestoDasRestricoes], Programacao):-
     nth1(IndiceFilme, Programacao, Filme),
     IndiceFilme \= Sessao,
     verificaRestricoes(RestoDasRestricoes, Programacao).
 
+% Restricao 'seguido': Filme2 deve vir imediatamente apos Filme1, no mesmo dia
 verificaRestricoes([seguido(Filme1, Filme2) | RestoDasRestricoes], Programacao):-
     nth1(IndiceFilme1, Programacao, Filme1),
     nth1(IndiceFilme2, Programacao, Filme2),
-    IndiceFilme1 \= 4,
+    IndiceFilme1 \= 4,                          % Impede que estejam em dias diferentes
     1 is IndiceFilme2 - IndiceFilme1,
     verificaRestricoes(RestoDasRestricoes, Programacao).
 
+% Restricao 'naoSeguido': Filmes nao podem ser seguidos no mesmo dia
 verificaRestricoes([naoSeguido(Filme1, Filme2) | RestoDasRestricoes], Programacao):-
     nth1(IndiceFilme1, Programacao, Filme1),
     nth1(IndiceFilme2, Programacao, Filme2),
     (
+        % Calcula a diferenca do modulo que tem de ser diferente de 1
         (ModuloDiferencaIndices is abs(IndiceFilme1 - IndiceFilme2), ModuloDiferencaIndices \= 1)
     ;
+        % Possibilita que os filmes estejam em sessoes seguidas mas em dias diferentes
         ((IndiceFilme1 = 4, IndiceFilme2 = 5); (IndiceFilme1 = 5, IndiceFilme2 = 4))
     ),
     verificaRestricoes(RestoDasRestricoes, Programacao).
 
+% Restricao 'antes': Filme1 deve vir antes de Filme2
 verificaRestricoes([antes(Filme1, Filme2) | RestoDasRestricoes], Programacao):-
     nth1(IndiceFilme1, Programacao, Filme1),
     nth1(IndiceFilme2, Programacao, Filme2),
