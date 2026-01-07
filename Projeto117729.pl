@@ -208,11 +208,7 @@ posicoesPalavraAux([H|T], PosInicial, [Par|RestoListaPares]) :-
 % Devolve uma lista (pista) que tem 2 na posição i se a Palavra1 (mistério) tem a mesma 
 % letra na posição i da Palavra2 (palpite) e 0 caso contrário
 pista1(Palavra1, Palavra2, Pista):-
-    tamanho(Palavra1, TamanhoP1),
-    tamanho(Palavra2, TamanhoP2),
-    TamanhoP1 = TamanhoP2,                  % Verifica se as palavras tem o mesmo tamanho
-    string_chars(Palavra1, ListaPalavra1),
-    string_chars(Palavra2, ListaPalavra2),
+    verificaECalcula(Palavra1, Palavra2, ListaPalavra1, ListaPalavra2),
     pista1AUX(ListaPalavra1, ListaPalavra2, Pista).
 
 % Predicado Auxiliar recursivo de pista1, que devole a pista
@@ -229,11 +225,7 @@ pista1AUX([H1|T1], [H2|T2], [N|Resto]):-
 % Devolve uma lista (pista) que tem 2 na posição i se a Palavra1 (mistério) tem a mesma letra que a palavra2 (palpite),
 % tem 1 se a letra da palavra2 existir na Palavra1 mas noutra posição, 0 caso contrário
 pista2(Palavra1, Palavra2, Pista):-
-    tamanho(Palavra1, TamanhoP1),
-    tamanho(Palavra2, TamanhoP2),
-    TamanhoP1 = TamanhoP2,                  % Verifica se as palavras tem o mesmo tamanho
-    string_chars(Palavra1, ListaPalavra1),
-    string_chars(Palavra2, ListaPalavra2),
+    verificaECalcula(Palavra1, Palavra2, ListaPalavra1, ListaPalavra2),
     pista2AUX(ListaPalavra1, ListaPalavra2, ListaPalavra1, Pista).
 
 % Predicado Auxiliar recursivo de pista2, que percorre as letras das duas palavras e ainda recebe a lista 
@@ -256,11 +248,7 @@ pista2AUX([H1|T1], [H2|T2], ListaPalavra1, [N|Resto]):-
 % Devolve uma lista (pista) que tem 2 na posição i se a Palavra1 (mistério) tem a mesma letra que a palavra2 (palpite),
 % tem 1 se a letra da palavra2 existir na Palavra1 noutra posição mas até um certo número, 0 caso contrário
 pista3(Palavra1, Palavra2, Pista):-
-    tamanho(Palavra1, TamanhoP1),
-    tamanho(Palavra2, TamanhoP2),
-    TamanhoP1 = TamanhoP2,                  % Verifica se as palavras tem o mesmo tamanho
-    string_chars(Palavra1, ListaPalavra1),
-    string_chars(Palavra2, ListaPalavra2),
+    verificaECalcula(Palavra1, Palavra2, ListaPalavra1, ListaPalavra2),
     letrasDiferentes(ListaPalavra1, ListaPalavra2, ListaLetrasDiferentes),
     pista3AUX(ListaPalavra1, ListaPalavra2, ListaLetrasDiferentes, Pista).
 
